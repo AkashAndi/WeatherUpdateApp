@@ -11,16 +11,21 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.ViewModelProvider
 import com.app.weatherupdates.R
 import com.app.weatherupdates.base.BaseBindingFragment
 import com.app.weatherupdates.databinding.FragmentBookmarkedLocationBinding
-import com.app.weatherupdates.domain.entity.Location
+import com.app.weatherupdates.misc.persistance.entity.BookMarkedLocation
+import com.app.weatherupdates.utils.Constants
+import com.app.weatherupdates.utils.activityViewModelProvider
 import com.app.weatherupdates.utils.replaceFragmentSafely
 import com.app.weatherupdates.utils.showAlertDialog
+import com.app.weatherupdates.viewmodel.WeatherViewModel
 import kotlinx.android.synthetic.main.app_bar_default.*
 import kotlinx.android.synthetic.main.fragment_bookmarked_location.*
 import java.io.IOException
 import java.util.*
+import javax.inject.Inject
 
 
 class BookMarkedLocationFragment : BaseBindingFragment<FragmentBookmarkedLocationBinding>() {
@@ -35,6 +40,27 @@ class BookMarkedLocationFragment : BaseBindingFragment<FragmentBookmarkedLocatio
         }
     }
 
+    @Inject
+    lateinit var factory: ViewModelProvider.Factory
+
+    private val viewModel by lazy {
+        activityViewModelProvider<WeatherViewModel>(factory)
+    }
+
+
+    private val bookmarkAdapter by lazy {
+        BookmarkAdapter(mutableListOf()) {
+            navigateToDetailsFragment(viewModel.bookmarkLiveData.value?.get(it)
+                    ?: BookMarkedLocation())
+        }
+    }
+
+    private fun navigateToDetailsFragment(bookMarkedLocation: BookMarkedLocation) {
+        (requireActivity() as WeatherActivity?)?.replaceFragmentSafely(
+                DetailsFragment.newInstance(bookMarkedLocation.address ?: ""),
+                DetailsFragment.TAG, addToBackStack = true, containerViewId = R.id.flContainer)
+    }
+
     override val contentView = R.layout.fragment_bookmarked_location
 
     override fun viewModelSetup() {
@@ -42,12 +68,17 @@ class BookMarkedLocationFragment : BaseBindingFragment<FragmentBookmarkedLocatio
     }
 
     private fun initObserver() {
+        viewModel.bookmarkLiveData.observe(this, androidx.lifecycle.Observer {
+            bookmarkAdapter.setData(it)
+        })
     }
 
     override fun viewSetup() {
         setHasOptionsMenu(true)
         toolbarSetup(requireActivity(), toolbarDefault, toolbarTitle, R.string.bookmarks, navigationIcon = false)
+        binding?.viewModel = viewModel
         initListener()
+        rvBookmarks?.adapter = bookmarkAdapter
     }
 
     private fun initListener() {
@@ -92,7 +123,8 @@ class BookMarkedLocationFragment : BaseBindingFragment<FragmentBookmarkedLocatio
         if (requestCode == REQUEST_PLACE_PICKER) {
             val latitude = data?.getDoubleExtra(EXTRAS_SELECTED_LATITUDE, 0.0) ?: 0.0
             val longitude = data?.getDoubleExtra(EXTRAS_SELECTED_LONGITUDE, 0.0) ?: 0.0
-            getAddress(latitude, longitude)
+            val bookMarkData = mapOf(Constants.INSERT_BOOKMARK_DB to getAddress(latitude, longitude))
+            viewModel.insertIntoDB(bookMarkData)
         }
     }
 
@@ -116,16 +148,16 @@ class BookMarkedLocationFragment : BaseBindingFragment<FragmentBookmarkedLocatio
 
     }
 
-    private fun getAddress(lat: Double, lng: Double): Location? {
+    private fun getAddress(lat: Double, lng: Double): BookMarkedLocation {
         val geocoder = Geocoder(requireContext(), Locale.getDefault())
         return try {
             val addresses: List<Address> = geocoder.getFromLocation(lat, lng, 1)
             val obj: Address = addresses[0]
             val add: String = obj.getAddressLine(0)
-            Location(add.trim(), lat, lng)
+            BookMarkedLocation(lat, lng, add.trim(), Calendar.getInstance().timeInMillis)
         } catch (e: IOException) {
             e.printStackTrace()
-            null
+            BookMarkedLocation()
         }
     }
 

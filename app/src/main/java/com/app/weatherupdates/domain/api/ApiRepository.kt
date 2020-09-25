@@ -1,4 +1,4 @@
-package com.app.weatherupdates.domain
+package com.app.weatherupdates.domain.api
 
 import com.app.weatherupdates.domain.entity.WeatherEntity
 import io.reactivex.Single

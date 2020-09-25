@@ -11,22 +11,24 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnSelectLocation"
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/_50sdp"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:layout_width="@dimen/_100sdp"
+        android:layout_height="@dimen/_40sdp"
         android:layout_margin="8dp"
-        android:background="@color/colorPrimary"
         android:insetLeft="0dp"
         android:insetTop="0dp"
         android:insetRight="0dp"
         android:insetBottom="0dp"
-        android:paddingStart="@dimen/_10sdp"
-        android:paddingEnd="@dimen/_10sdp"
+        android:paddingStart="@dimen/_20sdp"
+        android:paddingEnd="@dimen/_20sdp"
         android:text="@string/select"
-        android:textColor="@android:color/white"
+        android:textAllCaps="false"
+        android:textColor="@color/colorPrimaryDark"
         android:textSize="@dimen/_14ssp"
-        app:cornerRadius="@dimen/_10sdp"
+        app:cornerRadius="@dimen/_25sdp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:strokeColor="@color/colorPrimaryDark" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

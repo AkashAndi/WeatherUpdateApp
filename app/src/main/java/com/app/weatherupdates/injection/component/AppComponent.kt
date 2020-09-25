@@ -27,9 +27,11 @@ import javax.inject.Singleton
 @Component(
         modules = [
             AndroidSupportInjectionModule::class,
+            AppModule::class,
             ViewModelModule::class,
             ActivityBindingModule::class,
-            WeatherModule::class]
+            WeatherModule::class,
+            MiscModule::class]
 )
 interface AppComponent : AndroidInjector<WeatherUpdatesApp> {
     @Component.Builder

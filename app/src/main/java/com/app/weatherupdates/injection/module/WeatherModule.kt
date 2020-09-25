@@ -1,7 +1,7 @@
 package com.app.weatherupdates.injection.module
 
 import com.app.weatherupdates.data.ApiDataRepository
-import com.app.weatherupdates.domain.ApiRepository
+import com.app.weatherupdates.domain.api.ApiRepository
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton

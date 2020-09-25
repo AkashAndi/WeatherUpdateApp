@@ -4,7 +4,7 @@ import com.app.weatherupdates.core.local.AppPrefs
 import com.app.weatherupdates.core.network.CommonService
 import com.app.weatherupdates.data.remote.ApiService
 import com.app.weatherupdates.data.remote.response.WeatherResponse
-import com.app.weatherupdates.domain.ApiRepository
+import com.app.weatherupdates.domain.api.ApiRepository
 import com.app.weatherupdates.domain.entity.WeatherEntity
 import io.reactivex.Single
 import javax.inject.Inject

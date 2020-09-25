@@ -26,6 +26,11 @@ class PickLocationActivity : BaseActivity() {
 
     private val position = LatLng(23.0225, 72.5714)
 
+    override fun onResume() {
+        mapView?.onResume()
+        super.onResume()
+    }
+
     override fun viewModelSetup() {
 
     }

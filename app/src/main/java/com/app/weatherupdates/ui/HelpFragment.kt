@@ -23,6 +23,7 @@ class HelpFragment : BaseBindingFragment<FragmentHelpBinding>() {
     }
 
     override fun viewSetup() {
+        setHasOptionsMenu(true)
         toolbarSetup(requireActivity(), toolbarDefault, toolbarTitle, R.string.help, navigationIcon = true)
         val htmlDocument =
                 "<html><body><h1>Weather App</h1><p>Weather, everybody wants to know how it is going to be during the week. Will it be rainy, windy,\n" +

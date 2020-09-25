@@ -1,8 +1,12 @@
 package com.app.weatherupdates.ui
 
+import androidx.lifecycle.ViewModelProvider
 import com.app.weatherupdates.R
 import com.app.weatherupdates.base.BaseActivity
 import com.app.weatherupdates.utils.replaceFragmentSafely
+import com.app.weatherupdates.utils.viewModelProvider
+import com.app.weatherupdates.viewmodel.WeatherViewModel
+import javax.inject.Inject
 
 class WeatherActivity : BaseActivity() {
 
@@ -13,7 +17,6 @@ class WeatherActivity : BaseActivity() {
     override val contentView = R.layout.activity_main
 
     override val style = R.style.AppTheme
-
 
     override fun viewModelSetup() {
 
