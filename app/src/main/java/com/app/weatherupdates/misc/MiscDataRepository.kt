@@ -7,7 +7,7 @@ import io.reactivex.Single
 import javax.inject.Inject
 
 class MiscDataRepository @Inject constructor(private val weatherDatabase: WeatherDatabase) :
-    MiscRepository {
+        MiscRepository {
 
     override fun insertBookmark(bookMarkedLocation: BookMarkedLocation): Single<Long> {
         return weatherDatabase.bookmarkedLocationDao().insertItem(bookMarkedLocation)
@@ -22,5 +22,12 @@ class MiscDataRepository @Inject constructor(private val weatherDatabase: Weathe
 
     override fun getBookmark(): Single<List<BookMarkedLocation>> {
         return weatherDatabase.bookmarkedLocationDao().getLocatoinDescending()
+    }
+
+    override fun deleteAll(): Single<Boolean> {
+        return Single.create {
+            weatherDatabase.bookmarkedLocationDao().deleteAll()
+            it.onSuccess(true)
+        }
     }
 }

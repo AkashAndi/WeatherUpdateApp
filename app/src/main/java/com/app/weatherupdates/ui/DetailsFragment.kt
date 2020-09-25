@@ -9,6 +9,7 @@ import com.app.weatherupdates.databinding.FragmentDetailsBinding
 import com.app.weatherupdates.utils.viewModelProvider
 import com.app.weatherupdates.viewmodel.WeatherDetailsViewModel
 import kotlinx.android.synthetic.main.app_bar_default.*
+import kotlinx.android.synthetic.main.fragment_details.*
 import javax.inject.Inject
 
 class DetailsFragment : BaseBindingFragment<FragmentDetailsBinding>() {
@@ -40,11 +41,13 @@ class DetailsFragment : BaseBindingFragment<FragmentDetailsBinding>() {
     override val contentView = R.layout.fragment_details
 
     override fun viewModelSetup() {
+        baseViewModel = viewModel
     }
 
     override fun viewSetup() {
         setHasOptionsMenu(true)
         toolbarSetup(requireActivity(), toolbarDefault, toolbarTitle, R.string.details, navigationIcon = true)
+        (requireActivity() as WeatherActivity?)?.snackView = rootCL
         binding?.viewModel = viewModel
         viewModel.address = arguments?.getString(EXTRAS_ADDRES)
         viewModel.latitude = arguments?.getDouble(EXTRAS_LAT) ?: 0.0

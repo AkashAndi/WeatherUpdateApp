@@ -7,4 +7,5 @@ interface MiscRepository {
     fun insertBookmark(bookMarkedLocation: BookMarkedLocation): Single<Long>
     fun deleteBookmark(id: String): Single<Boolean>
     fun getBookmark(): Single<List<BookMarkedLocation>>
+    fun deleteAll(): Single<Boolean>
 }

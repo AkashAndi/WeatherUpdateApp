@@ -2,11 +2,14 @@ package com.app.weatherupdates.viewmodel
 
 import android.app.Application
 import androidx.databinding.Bindable
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.app.weatherupdates.BR
 import com.app.weatherupdates.base.BaseObservableViewModel
 import com.app.weatherupdates.core.local.AppPrefs
 import com.app.weatherupdates.data.WeatherRequest
 import com.app.weatherupdates.domain.api.usecase.GetWeatherUseCase
+import com.app.weatherupdates.domain.misc.usecase.DeleteAllUsecase
 import com.app.weatherupdates.utils.Constants
 import com.app.weatherupdates.utils.customSubscribe
 import javax.inject.Inject
@@ -14,8 +17,13 @@ import javax.inject.Inject
 class WeatherDetailsViewModel @Inject constructor(
         val app: Application,
         private val appPrefs: AppPrefs,
-        private val getWeatherUseCase: GetWeatherUseCase
+        private val getWeatherUseCase: GetWeatherUseCase,
+        private val deleteAllUsecase: DeleteAllUsecase
 ) : BaseObservableViewModel(app) {
+
+    private val _deleteALlLiveData = MutableLiveData<Boolean>()
+    val deleteALlLiveData: LiveData<Boolean> get() = _deleteALlLiveData
+
 
     var latitude = 0.0
     var longitude = 0.0
@@ -143,6 +151,20 @@ class WeatherDetailsViewModel @Inject constructor(
             progressVisible = false
             _errorLiveData.value = it
         }).collect()
+    }
+
+    fun deleteAll() {
+        deleteAllUsecase.execute().customSubscribe({
+            progressVisible = false
+            _deleteALlLiveData.value = true
+        }, {
+            progressVisible = false
+            _errorLiveData.value = it
+        }).collect()
+    }
+
+    fun setDeleteAllLiveDataFalse() {
+        _deleteALlLiveData.value = false
     }
 
 }

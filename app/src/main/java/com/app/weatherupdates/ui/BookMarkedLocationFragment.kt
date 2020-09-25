@@ -21,10 +21,7 @@ import com.app.weatherupdates.base.BaseBindingFragment
 import com.app.weatherupdates.databinding.FragmentBookmarkedLocationBinding
 import com.app.weatherupdates.misc.persistance.entity.BookMarkedLocation
 import com.app.weatherupdates.ui.adapter.BookmarkAdapter
-import com.app.weatherupdates.utils.Constants
-import com.app.weatherupdates.utils.activityViewModelProvider
-import com.app.weatherupdates.utils.replaceFragmentSafely
-import com.app.weatherupdates.utils.showAlertDialog
+import com.app.weatherupdates.utils.*
 import com.app.weatherupdates.viewmodel.WeatherViewModel
 import kotlinx.android.synthetic.main.app_bar_default.*
 import kotlinx.android.synthetic.main.fragment_bookmarked_location.*
@@ -100,12 +97,14 @@ class BookMarkedLocationFragment : BaseBindingFragment<FragmentBookmarkedLocatio
     }
 
     private fun initObserver() {
+        baseViewModel = viewModel
         viewModel.bookmarkLiveData.observe(this, {
             bookmarkAdapter.setData(it)
         })
     }
 
     override fun viewSetup() {
+        (requireActivity() as WeatherActivity?)?.snackView = rvBookmarks
         setHasOptionsMenu(true)
         toolbarSetup(
                 requireActivity(),
@@ -122,6 +121,7 @@ class BookMarkedLocationFragment : BaseBindingFragment<FragmentBookmarkedLocatio
 
     private fun initListener() {
         fabAddLocation?.setOnClickListener {
+            fabAddLocation?.avoidDoubleClicks()
             if (ContextCompat.checkSelfPermission(
                             requireContext(),
                             Manifest.permission.ACCESS_FINE_LOCATION

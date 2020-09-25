@@ -1,12 +1,9 @@
 package com.app.weatherupdates.ui
 
-import androidx.lifecycle.ViewModelProvider
 import com.app.weatherupdates.R
 import com.app.weatherupdates.base.BaseActivity
 import com.app.weatherupdates.utils.replaceFragmentSafely
-import com.app.weatherupdates.utils.viewModelProvider
-import com.app.weatherupdates.viewmodel.WeatherViewModel
-import javax.inject.Inject
+import kotlinx.android.synthetic.main.activity_main.*
 
 class WeatherActivity : BaseActivity() {
 
@@ -23,7 +20,9 @@ class WeatherActivity : BaseActivity() {
     }
 
     override fun viewSetup() {
-        navigateToBookMarkFragment()
+        snackView = flContainer
+        if (savedInstanceState == null)
+            navigateToBookMarkFragment()
     }
 
     private fun navigateToBookMarkFragment() {

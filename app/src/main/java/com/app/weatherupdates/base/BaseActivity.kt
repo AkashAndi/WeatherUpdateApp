@@ -20,6 +20,8 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
 
     var snackView: ViewGroup? = null
 
+    var savedInstanceState: Bundle? = null
+
     abstract val contentView: Int
         @LayoutRes get
 
@@ -32,6 +34,7 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        this.savedInstanceState = savedInstanceState
         setTheme(style)
         contentView.takeIf { it != 0 }?.let {
             setContentView(it)

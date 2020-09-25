@@ -3,7 +3,6 @@ package com.app.weatherupdates.core.network
 import androidx.annotation.CallSuper
 import com.app.weatherupdates.BuildConfig
 import com.app.weatherupdates.WeatherUpdatesApp
-import com.readystatesoftware.chuck.ChuckInterceptor
 import okhttp3.OkHttpClient
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -29,7 +28,7 @@ abstract class CommonService<T> : BaseService<T>() {
                     .readTimeout(1, TimeUnit.MINUTES)
                     .writeTimeout(1, TimeUnit.MINUTES)
                     .addInterceptor(networkAvailabilityInterceptor)
-                    .addInterceptor(ChuckInterceptor(weatherUpdatesApp.baseContext))
+//                    .addInterceptor(ChuckInterceptor(weatherUpdatesApp.baseContext))
                     .addInterceptor(netErrInterceptor)
         } else {
             super.handleOkHttpBuilder(builder)

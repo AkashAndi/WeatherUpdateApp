@@ -2,8 +2,6 @@ package com.app.weatherupdates.utils
 
 import android.content.Context
 import android.view.View
-import android.view.animation.AlphaAnimation
-import android.view.animation.TranslateAnimation
 import android.widget.TextView
 import android.widget.Toast
 import com.google.android.material.snackbar.Snackbar
@@ -53,30 +51,3 @@ fun View.avoidDoubleClicks() {
 }
 
 
-fun View.slideUp(duration: Long) {
-    val animate = TranslateAnimation(
-            0f,  // fromXDelta
-            0f,  // toXDelta
-            this.height.toFloat(),  // fromYDelta
-            this.height.toFloat().minus(200)) // toYDelta
-    animate.duration = duration
-    animate.fillAfter = true
-    this.startAnimation(animate)
-}
-
-fun View.slideDown(duration: Long) {
-    val animate = TranslateAnimation(
-            0f,  // fromXDelta
-            0f,  // toXDelta
-            0f,  // fromYDelta
-            200f) // toYDelta
-    animate.duration = duration
-    animate.fillAfter = true
-    this.startAnimation(animate)
-}
-
-fun View.fadeIn(duration: Long) {
-    val animate = AlphaAnimation(0.2f, 1f)
-    animate.duration = duration
-    this.startAnimation(animate)
-}

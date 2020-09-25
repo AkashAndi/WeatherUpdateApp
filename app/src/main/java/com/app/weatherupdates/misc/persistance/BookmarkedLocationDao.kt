@@ -15,7 +15,9 @@ interface BookmarkedLocationDao {
     @Query("DELETE FROM " + BookMarkedLocation.TABLE_NAME + " where " + BookMarkedLocation.TIMESTAMP + "= :id")
     fun deleteLocation(id: String)
 
-    @Query("SELECT * FROM " + BookMarkedLocation.TABLE_NAME + " ORDER BY " + BookMarkedLocation.TIMESTAMP + " DESC LIMIT 10")
+    @Query("SELECT * FROM " + BookMarkedLocation.TABLE_NAME + " ORDER BY " + BookMarkedLocation.TIMESTAMP + " DESC")
     fun getLocatoinDescending(): Single<List<BookMarkedLocation>>
 
+    @Query("DELETE FROM " + BookMarkedLocation.TABLE_NAME + " ")
+    fun deleteAll()
 }
