@@ -12,7 +12,7 @@ interface BookmarkedLocationDao {
     @Insert
     fun insertItem(bookMarkedLocation: BookMarkedLocation): Single<Long>
 
-    @Query("DELETE FROM " + BookMarkedLocation.TABLE_NAME + " where " + BookMarkedLocation.ID + "= :id")
+    @Query("DELETE FROM " + BookMarkedLocation.TABLE_NAME + " where " + BookMarkedLocation.TIMESTAMP + "= :id")
     fun deleteLocation(id: String)
 
     @Query("SELECT * FROM " + BookMarkedLocation.TABLE_NAME + " ORDER BY " + BookMarkedLocation.TIMESTAMP + " DESC LIMIT 10")

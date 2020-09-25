@@ -154,7 +154,7 @@ class BookMarkedLocationFragment : BaseBindingFragment<FragmentBookmarkedLocatio
             val addresses: List<Address> = geocoder.getFromLocation(lat, lng, 1)
             val obj: Address = addresses[0]
             val add: String = obj.getAddressLine(0)
-            BookMarkedLocation(lat, lng, add.trim(), Calendar.getInstance().timeInMillis)
+            BookMarkedLocation(lat, lng, add.trim(), Calendar.getInstance().timeInMillis.toString())
         } catch (e: IOException) {
             e.printStackTrace()
             BookMarkedLocation()
