@@ -19,12 +19,9 @@ package com.app.weatherupdates.injection.module
 import android.app.Application
 import android.content.Context
 import android.net.ConnectivityManager
-import androidx.room.Room
-import androidx.room.RoomDatabase
 import com.app.weatherupdates.R
 import com.app.weatherupdates.WeatherUpdatesApp
 import com.app.weatherupdates.core.local.AppPrefs
-import com.app.weatherupdates.core.local.WeatherDatabase
 import com.app.weatherupdates.core.network.NetworkAvailabilityInterceptor
 import com.app.weatherupdates.core.network.NetworkErrorIntercepter
 import com.google.gson.Gson
@@ -70,13 +67,4 @@ class AppModule {
     fun provideNetworkErrorInterceptor(app: Application, gson: Gson): NetworkErrorIntercepter =
             NetworkErrorIntercepter(app, gson)
 
-
-    @Singleton
-    @Provides
-    fun provideRoomDatabase(app: Application): WeatherDatabase {
-        return Room.databaseBuilder(app, WeatherDatabase::class.java, "weather_db")
-            .setJournalMode(RoomDatabase.JournalMode.TRUNCATE)
-            .fallbackToDestructiveMigration()
-            .build()
-    }
 }

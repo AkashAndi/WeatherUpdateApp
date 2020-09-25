@@ -2,13 +2,9 @@ package com.app.weatherupdates.viewmodel
 
 import android.app.Application
 import androidx.databinding.Bindable
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.app.weatherupdates.BR
 import com.app.weatherupdates.base.BaseObservableViewModel
-import com.app.weatherupdates.data.WeatherRequest
-import com.app.weatherupdates.domain.api.usecase.GetWeatherUseCase
-import com.app.weatherupdates.domain.entity.WeatherEntity
 import com.app.weatherupdates.domain.misc.usecase.DeleteBookmarkUsecase
 import com.app.weatherupdates.domain.misc.usecase.GetBookMarkUsecase
 import com.app.weatherupdates.domain.misc.usecase.InsertIntoDBUsecase
@@ -19,10 +15,10 @@ import javax.inject.Inject
 
 class WeatherViewModel @Inject constructor(
         val app: Application,
-        private val getWeatherUseCase: GetWeatherUseCase,
         private val getBookMarkUsecase: GetBookMarkUsecase,
         private val insertIntoDBUsecase: InsertIntoDBUsecase,
-        private val deleteBookmarkUsecase: DeleteBookmarkUsecase) : BaseObservableViewModel(app) {
+        private val deleteBookmarkUsecase: DeleteBookmarkUsecase
+) : BaseObservableViewModel(app) {
 
     @Bindable
     var progressVisible: Boolean = false
@@ -32,9 +28,6 @@ class WeatherViewModel @Inject constructor(
         }
 
     var bookmarkLiveData = MutableLiveData<MutableList<BookMarkedLocation>>()
-
-    private val _weatherLiveData = MutableLiveData<WeatherEntity?>()
-    val weatherLiveData: LiveData<WeatherEntity?> get() = _weatherLiveData
 
     fun insertIntoDB(
             data: Map<String, BookMarkedLocation>
@@ -47,32 +40,24 @@ class WeatherViewModel @Inject constructor(
         }).collect()
     }
 
-    private fun getBookmark() {
+    fun getBookmark() {
         getBookMarkUsecase.execute().customSubscribe({
             progressVisible = false
             bookmarkLiveData.value = it.toMutableList()
         }, {
             _errorLiveData.value = it
             progressVisible = false
-        })
-    }
-
-    fun getWeatherDetails(lattitud: Double, longitude: Double) {
-        progressVisible = true
-        val data =
-                mapOf(
-                        Constants.WEATHER_REQUEST to WeatherRequest(
-                                lattitud,
-                                longitude
-                        )
-                )
-        getWeatherUseCase.execute(data).customSubscribe({
-            progressVisible = false
-            _weatherLiveData.value = it
-        }, {
-            progressVisible = false
-            _errorLiveData.value = it
         }).collect()
     }
 
+    fun deleteLocation(timeStamp: String) {
+        progressVisible = true
+        val data = mapOf(Constants.DELETE_BOOKMARK_DB to timeStamp)
+        deleteBookmarkUsecase.execute(data).customSubscribe({
+            progressVisible = false
+            getBookmark()
+        }, {
+            progressVisible = false
+        }).collect()
+    }
 }

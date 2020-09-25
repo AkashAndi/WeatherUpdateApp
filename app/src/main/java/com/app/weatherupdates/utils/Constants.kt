@@ -6,5 +6,7 @@ class Constants {
         const val WEATHER_REQUEST = "WEATHER_REQUEST"
         const val INSERT_BOOKMARK_DB = "INSERT_BOOKMARK_DB"
         const val DELETE_BOOKMARK_DB = "DELETE_BOOKMARK_DB"
+        const val UNIT_TEMP_CELCIUS = "metric"
+        const val UNIT_TEMP_FER = "imperial"
     }
 }

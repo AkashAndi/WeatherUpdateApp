@@ -1,6 +1,10 @@
 package com.app.weatherupdates.ui
 
 import android.Manifest
+import android.app.Activity.RESULT_OK
+import android.app.AlertDialog
+import android.content.DialogInterface.BUTTON_NEGATIVE
+import android.content.DialogInterface.BUTTON_POSITIVE
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Address
@@ -16,6 +20,7 @@ import com.app.weatherupdates.R
 import com.app.weatherupdates.base.BaseBindingFragment
 import com.app.weatherupdates.databinding.FragmentBookmarkedLocationBinding
 import com.app.weatherupdates.misc.persistance.entity.BookMarkedLocation
+import com.app.weatherupdates.ui.adapter.BookmarkAdapter
 import com.app.weatherupdates.utils.Constants
 import com.app.weatherupdates.utils.activityViewModelProvider
 import com.app.weatherupdates.utils.replaceFragmentSafely
@@ -49,16 +54,43 @@ class BookMarkedLocationFragment : BaseBindingFragment<FragmentBookmarkedLocatio
 
 
     private val bookmarkAdapter by lazy {
-        BookmarkAdapter(mutableListOf()) {
-            navigateToDetailsFragment(viewModel.bookmarkLiveData.value?.get(it)
-                    ?: BookMarkedLocation())
+        BookmarkAdapter(mutableListOf(), {
+            navigateToDetailsFragment(
+                    viewModel.bookmarkLiveData.value?.get(it)
+                            ?: BookMarkedLocation()
+            )
+        }) {
+            viewModel.bookmarkLiveData.value?.get(it)?.timeStamp?.let { timeStamp ->
+                alerBeforeDelete(timeStamp)
+            }
         }
+    }
+
+    private fun alerBeforeDelete(timeStamp: String) {
+        val alertDialog = AlertDialog.Builder(requireContext(), 0).create()
+        alertDialog.setButton(
+                BUTTON_POSITIVE, getString(R.string.delete)
+        ) { dialog, _ ->
+            viewModel.deleteLocation(timeStamp)
+            dialog.dismiss()
+        }
+        alertDialog.setButton(BUTTON_NEGATIVE, getString(R.string.cancel)) { dialog, _ ->
+            dialog.dismiss()
+        }
+        alertDialog.setTitle(getString(R.string.app_name))
+        alertDialog.setMessage(getString(R.string.are_you_sure))
+        alertDialog.show()
     }
 
     private fun navigateToDetailsFragment(bookMarkedLocation: BookMarkedLocation) {
         (requireActivity() as WeatherActivity?)?.replaceFragmentSafely(
-                DetailsFragment.newInstance(bookMarkedLocation.address ?: ""),
-                DetailsFragment.TAG, addToBackStack = true, containerViewId = R.id.flContainer)
+                DetailsFragment.newInstance(
+                        bookMarkedLocation.address
+                                ?: "", bookMarkedLocation.latitude ?: 0.0,
+                        bookMarkedLocation.longitude ?: 0.0
+                ),
+                DetailsFragment.TAG, addToBackStack = true, containerViewId = R.id.flContainer
+        )
     }
 
     override val contentView = R.layout.fragment_bookmarked_location
@@ -68,23 +100,33 @@ class BookMarkedLocationFragment : BaseBindingFragment<FragmentBookmarkedLocatio
     }
 
     private fun initObserver() {
-        viewModel.bookmarkLiveData.observe(this, androidx.lifecycle.Observer {
+        viewModel.bookmarkLiveData.observe(this, {
             bookmarkAdapter.setData(it)
         })
     }
 
     override fun viewSetup() {
         setHasOptionsMenu(true)
-        toolbarSetup(requireActivity(), toolbarDefault, toolbarTitle, R.string.bookmarks, navigationIcon = false)
+        toolbarSetup(
+                requireActivity(),
+                toolbarDefault,
+                toolbarTitle,
+                R.string.bookmarks,
+                navigationIcon = false
+        )
         binding?.viewModel = viewModel
         initListener()
         rvBookmarks?.adapter = bookmarkAdapter
+        viewModel.getBookmark()
     }
 
     private fun initListener() {
         fabAddLocation?.setOnClickListener {
-            if (ContextCompat.checkSelfPermission(requireContext(),
-                            Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(
+                            requireContext(),
+                            Manifest.permission.ACCESS_FINE_LOCATION
+                    ) == PackageManager.PERMISSION_GRANTED
+            ) {
                 navigateToPickLocation()
             } else {
                 getLocationPermission()
@@ -101,7 +143,10 @@ class BookMarkedLocationFragment : BaseBindingFragment<FragmentBookmarkedLocatio
     private fun getLocationPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             // this mean device os is greater or equal to Marshmallow.
-            if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+            if (ActivityCompat.checkSelfPermission(
+                            requireContext(),
+                            Manifest.permission.ACCESS_FINE_LOCATION
+                    )
                     != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
                             requireContext(),
                             Manifest.permission.ACCESS_COARSE_LOCATION
@@ -120,15 +165,22 @@ class BookMarkedLocationFragment : BaseBindingFragment<FragmentBookmarkedLocatio
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_PLACE_PICKER) {
-            val latitude = data?.getDoubleExtra(EXTRAS_SELECTED_LATITUDE, 0.0) ?: 0.0
-            val longitude = data?.getDoubleExtra(EXTRAS_SELECTED_LONGITUDE, 0.0) ?: 0.0
-            val bookMarkData = mapOf(Constants.INSERT_BOOKMARK_DB to getAddress(latitude, longitude))
-            viewModel.insertIntoDB(bookMarkData)
+        if (resultCode == RESULT_OK) {
+            if (requestCode == REQUEST_PLACE_PICKER) {
+                val latitude = data?.getDoubleExtra(EXTRAS_SELECTED_LATITUDE, 0.0) ?: 0.0
+                val longitude = data?.getDoubleExtra(EXTRAS_SELECTED_LONGITUDE, 0.0) ?: 0.0
+                val bookMarkData =
+                        mapOf(Constants.INSERT_BOOKMARK_DB to getAddress(latitude, longitude))
+                viewModel.insertIntoDB(bookMarkData)
+            }
         }
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+            requestCode: Int,
+            permissions: Array<out String>,
+            grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == WeatherActivity.REQUEST_PERMISSIONS_REQUEST_CODE) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -169,8 +221,16 @@ class BookMarkedLocationFragment : BaseBindingFragment<FragmentBookmarkedLocatio
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_options -> {
-                (requireActivity() as WeatherActivity?)?.replaceFragmentSafely(HelpFragment.newInstance(),
-                        HelpFragment.TAG, addToBackStack = true, containerViewId = R.id.flContainer)
+                (requireActivity() as WeatherActivity?)?.replaceFragmentSafely(
+                        HelpFragment.newInstance(),
+                        HelpFragment.TAG, addToBackStack = true, containerViewId = R.id.flContainer
+                )
+            }
+            R.id.menu_settings -> {
+                (requireActivity() as WeatherActivity?)?.replaceFragmentSafely(
+                        SettingsFragment.newInstance(),
+                        SettingsFragment.TAG, addToBackStack = true, containerViewId = R.id.flContainer
+                )
             }
             else -> return super.onOptionsItemSelected(item)
         }

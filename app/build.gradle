@@ -14,7 +14,7 @@ android {
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
-        buildConfigField "String", "BASE_URL", String.format("\"%s\"", developmentServerUrl)
+        buildConfigField "String", "BASE_URL", String.format("\"%s\"", serverUrl)
         buildConfigField "String", "APP_ID", String.format("\"%s\"", apiAppId)
         resValue("string", "google_maps_key", "AIzaSyC4kY-C9KOmw6hMQvK3V6ijanx4LB1yFXk")
 

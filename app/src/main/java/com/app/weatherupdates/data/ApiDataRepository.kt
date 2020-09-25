@@ -15,9 +15,17 @@ class ApiDataRepository @Inject constructor(
 
     override fun getWeather(lat: Double, lon: Double, appId: String): Single<WeatherEntity> {
         return networkService.getWeather(lat, lon, appId, appPrefs.unitSelected).map {
-            WeatherEntity(it.base, mapClouds(it.clouds), it.cod, it.dt, it.id, mapMain(it.main), it.name)
+            WeatherEntity(it.base, mapClouds(it.clouds), it.cod, it.dt, it.id, mapMain(it.main), it.name, weather = mapWeatherList(it.weather),
+                    wind = mapWindData(it.wind))
         }
     }
+
+    private fun mapWindData(wind: WeatherResponse.Wind?) = WeatherEntity.Wind(wind?.deg, wind?.speed)
+
+    private fun mapWeatherList(weather: List<WeatherResponse.Weather?>?): List<WeatherEntity.Weather?>? =
+            weather?.map {
+                WeatherEntity.Weather(it?.description, it?.icon, it?.id, it?.main)
+            }
 
     private fun mapMain(main: WeatherResponse.Main?) = WeatherEntity.Main(main?.feelsLike,
             main?.humidity, main?.pressure, main?.temp, main?.tempMax, main?.tempMin)

@@ -6,7 +6,6 @@ import com.app.weatherupdates.R
 import com.app.weatherupdates.base.BaseActivity
 import com.app.weatherupdates.ui.BookMarkedLocationFragment.Companion.EXTRAS_SELECTED_LATITUDE
 import com.app.weatherupdates.ui.BookMarkedLocationFragment.Companion.EXTRAS_SELECTED_LONGITUDE
-import com.app.weatherupdates.ui.BookMarkedLocationFragment.Companion.REQUEST_PLACE_PICKER
 import com.app.weatherupdates.utils.showSnack
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -54,7 +53,7 @@ class PickLocationActivity : BaseActivity() {
             val intent = Intent()
             intent.putExtra(EXTRAS_SELECTED_LATITUDE, selectedLatLong?.latitude)
             intent.putExtra(EXTRAS_SELECTED_LONGITUDE, selectedLatLong?.longitude)
-            setResult(REQUEST_PLACE_PICKER, intent)
+            setResult(RESULT_OK, intent)
             finish()
         }
     }
@@ -62,9 +61,8 @@ class PickLocationActivity : BaseActivity() {
     @SuppressLint("MissingPermission")
     private fun setMapLocation(map: GoogleMap) {
         with(map) {
-            moveCamera(CameraUpdateFactory.newLatLngZoom(position, 11f))
+            moveCamera(CameraUpdateFactory.newLatLngZoom(position, 13f))
             isMyLocationEnabled = true
-            addMarker(MarkerOptions().position(position))
             mapType = GoogleMap.MAP_TYPE_NORMAL
             setOnMapClickListener {
                 selectedLatLong = it

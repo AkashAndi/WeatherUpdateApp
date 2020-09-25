@@ -12,9 +12,9 @@
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnSelectLocation"
         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-        android:layout_width="@dimen/_100sdp"
-        android:layout_height="@dimen/_40sdp"
-        android:layout_margin="8dp"
+        android:layout_width="@dimen/_120sdp"
+        android:layout_height="@dimen/_30sdp"
+        android:layout_margin="@dimen/_12sdp"
         android:insetLeft="0dp"
         android:insetTop="0dp"
         android:insetRight="0dp"

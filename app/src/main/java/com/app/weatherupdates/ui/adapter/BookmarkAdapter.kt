@@ -1,4 +1,4 @@
-package com.app.weatherupdates.ui
+package com.app.weatherupdates.ui.adapter
 
 import android.view.LayoutInflater
 import android.view.View
@@ -10,7 +10,8 @@ import com.app.weatherupdates.databinding.ItemBookmarkedLocationBinding
 import com.app.weatherupdates.misc.persistance.entity.BookMarkedLocation
 
 class BookmarkAdapter(var items: MutableList<BookMarkedLocation>,
-                      var itemClick: (position: Int) -> Unit
+                      var itemClick: (position: Int) -> Unit,
+                      var itemLongClick: (position: Int) -> Unit
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     fun setData(items: MutableList<BookMarkedLocation>){
@@ -34,6 +35,7 @@ class BookmarkAdapter(var items: MutableList<BookMarkedLocation>,
         if (holder is BookMarkViewHolder) {
             holder.bind(position)
             holder.itemView.setOnClickListener(holder)
+            holder.itemView.setOnLongClickListener(holder)
         }
     }
 
@@ -42,7 +44,12 @@ class BookmarkAdapter(var items: MutableList<BookMarkedLocation>,
     }
 
     inner class BookMarkViewHolder(private val itemBookmarkedLocationBinding: ItemBookmarkedLocationBinding) :
-            RecyclerView.ViewHolder(itemBookmarkedLocationBinding.root), View.OnClickListener {
+            RecyclerView.ViewHolder(itemBookmarkedLocationBinding.root), View.OnClickListener, View.OnLongClickListener {
+
+        override fun onLongClick(v: View?): Boolean {
+            itemLongClick.invoke(adapterPosition)
+            return false
+        }
 
         override fun onClick(v: View?) {
             itemClick.invoke(adapterPosition)

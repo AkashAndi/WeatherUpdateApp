@@ -26,19 +26,20 @@ class HelpFragment : BaseBindingFragment<FragmentHelpBinding>() {
         setHasOptionsMenu(true)
         toolbarSetup(requireActivity(), toolbarDefault, toolbarTitle, R.string.help, navigationIcon = true)
         val htmlDocument =
-                "<html><body><h1>Weather App</h1><p>Weather, everybody wants to know how it is going to be during the week. Will it be rainy, windy,\n" +
+                "<html><body><h1>Weather App</h1><p><h2>Weather, everybody wants to know how it is going to be during the week. Will it be rainy, windy,\n" +
                         "or sunny? Luckily for us, in the information age, there are open APIs to retrieve information\n" +
-                        "about it.\n...</p>" +
-                        "<p>Landing Screen will show the bookmarked location</p>" +
-                        "<p>You can delete it by long pressing the location and selecte delete from the dialog.</p>" +
-                        "<p>You can add more location by pressing on Add button given below</p></body></html>"
+                        "about it.\n...</h2></p>" +
+                        "<h3><p>Landing Screen will show the bookmarked location</p>" +
+                        "<p>You can delete it by long pressing the location and select delete from the dialog.</p>" +
+                        "<p>You can See weather details by taping on bookmark location</p>" +
+                        "<p>You can Change temperature unit from <b>Setting Screen<b/></p><h3></body></html>"
 
-        webWiewHelp?.loadData(htmlDocument, "text/html; charset=utf-8", "UTF-8");
+        webWiewHelp?.loadData(htmlDocument, "text/html; charset=utf-8", "UTF-8")
 
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item?.itemId) {
+        when (item.itemId) {
             android.R.id.home -> {
                 requireActivity().onBackPressed()
                 return true
